@@ -33,7 +33,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
+      <main className="flex-col m-10">
         {children}
+        </main>
         <ScrollRestoration />
         <Scripts />
       </body>

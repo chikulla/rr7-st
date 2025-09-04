@@ -28,6 +28,30 @@ Install the dependencies:
 npm install
 ```
 
+### Environment Configuration
+
+1. Copy the example environment file:
+```bash
+cp .env.example .env
+```
+
+2. Update the API base URL in `.env`:
+```bash
+# For local development
+API_BASE_URL=http://localhost:3000
+
+# For production (example)
+# API_BASE_URL=https://your-production-api.com
+```
+
+### Mock API Server
+
+Start the JSON server for mock data:
+
+```bash
+npx json-server mock/db.json --port 3000
+```
+
 ### Development
 
 Start the development server with HMR:
@@ -37,6 +61,16 @@ npm run dev
 ```
 
 Your application will be available at `http://localhost:5173`.
+
+## API Configuration
+
+The application uses a shared API configuration located in `app/api/api.ts`. The API base URL is determined in the following priority order:
+
+1. **Environment Variable**: `API_BASE_URL` from `.env` file
+2. **Browser Detection**: Uses the current hostname with port 3000 (e.g., `https://yourdomain.com:3000`)
+3. **Fallback**: `http://localhost:3000`
+
+This allows the application to work seamlessly across different environments without code changes.
 
 ## Building for Production
 
