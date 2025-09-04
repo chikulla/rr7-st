@@ -5,4 +5,5 @@ export default [
     route("about", "about/about.tsx"),
     route("users", "users/users.tsx"),
     route("users/:userId", "users/user.tsx"),
+    route("users/:userId/edit", "users/edit.tsx"),
 ] satisfies RouteConfig;

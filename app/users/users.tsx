@@ -8,7 +8,6 @@ interface User {
 
 export async function loader(): Promise<User[]> {
     try {
-        throw "err"
         const users = await api.get('/users');
         return users;
     } catch (error) {
