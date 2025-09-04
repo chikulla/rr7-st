@@ -1,3 +1,7 @@
+# rr7-st
+
+react router 7 study repo
+
 # Welcome to React Router!
 
 A modern, production-ready template for building full-stack React applications using React Router.
