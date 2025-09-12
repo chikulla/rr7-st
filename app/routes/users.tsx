@@ -6,7 +6,6 @@ let mem = [
     { id: 2, name: "Hanako Kikuchi", email: "hanako@example.com" },
 ];
 export async function loader(): Promise<{ users: typeof mem }> {
-    console.log("users.tsx loader");
     return { users: mem }
 }
 
