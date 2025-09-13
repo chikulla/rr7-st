@@ -139,7 +139,7 @@ export default function Users({ loaderData, actionData }: Route.ComponentProps) 
         }
     }, [actionData, form])
     return (
-        <div>
+        <div className="p-6">
             <h1>Users</h1>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mb-8">
