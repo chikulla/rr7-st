@@ -25,7 +25,7 @@ export async function loader(): Promise<{ users: User[] }> {
 
 }
 
-export type ActionData = { error: string } | { created: User };
+export type ActionData = { error: string } | { created: string };
 export async function action({ request }: Route.ActionArgs): Promise<ActionData> {
     await new Promise(resolve => setTimeout(resolve, 500));
     const form = await request.formData(); // form data取り出し
@@ -33,10 +33,17 @@ export async function action({ request }: Route.ActionArgs): Promise<ActionData>
     const email = String(form.get("email"));
     if (!name || !email) return { error: "name and email are required" };
 
-    const id = Math.max(...mem.map(u => u.id)) + 1;
-    const user = { id, name, email };
-    mem = [...mem, user];
-    return { created: user }
+    const user = { name, email };
+    const r = await fetch("http://localhost:6173/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email }),
+    })
+    if (r.ok) {
+        return { created: user.name }
+    } else {
+        return { error: "failed to create user" }
+    }
 }
 
 const cols: ColumnDef<User>[] = [
@@ -137,7 +144,7 @@ export default function Users({ loaderData, actionData }: Route.ComponentProps) 
                 actionData?.error ? (
                     <p style={{ color: "red" }}>{actionData.error}</p>
                 ) : actionData?.created ? (
-                    <p>Created: {actionData.created.name}</p>
+                    <p>Created: {actionData.created}</p>
                 ) : null
             }
 
