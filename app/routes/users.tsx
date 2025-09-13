@@ -1,10 +1,10 @@
-import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable, type Column, type ColumnDef } from "@tanstack/react-table";
+import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable, type Column, type ColumnDef, type OnChangeFn, type SortingState } from "@tanstack/react-table";
 import type { Route } from "./+types/users";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "~/components/ui/form";
 import { useForm } from "react-hook-form";
-import { useNavigation, useSubmit } from "react-router";
+import { useNavigate, useNavigation, useSubmit } from "react-router";
 import { useEffect, useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 import { ArrowDown, ArrowUp, ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
@@ -60,17 +60,29 @@ const sortableHeader = (label: string) => ({ column }: { column: Column<User, un
 }
 
 const cols: ColumnDef<User>[] = [
-    { accessorKey: "id", header: sortableHeader("ID") },
-    { accessorKey: "name", header: sortableHeader("Name") },
-    { accessorKey: "email", header: sortableHeader("Email") },
+    { accessorKey: "id", header: sortableHeader("ID"), enableSorting: true },
+    { accessorKey: "name", header: sortableHeader("Name"), enableSorting: true },
+    { accessorKey: "email", header: sortableHeader("Email"), enableSorting: true },
 ]
 
 function DataTable<TData, TValue>({ columns, data }: { columns: ColumnDef<TData, TValue>[], data: TData[] }) {
+    const [sorting, setSorting] = useState<SortingState>([]);
+    const navigate = useNavigate();
+    useEffect(() => {
+        if (sorting.length === 0) {
+            return
+        }
+        const s = sorting[0];
+        navigate(`?_sort=${s.desc ? '-' : ''}${s.id}&_order=${s.desc ? "desc" : "asc"}`, { replace: true })
+    }, [sorting])
     const table = useReactTable({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
+        onSortingChange: setSorting,
+        state: { sorting }
     })
+
 
     return (
         <div>
