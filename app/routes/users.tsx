@@ -1,4 +1,4 @@
-import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable, type ColumnDef } from "@tanstack/react-table";
+import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable, type Column, type ColumnDef } from "@tanstack/react-table";
 import type { Route } from "./+types/users";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
@@ -7,6 +7,8 @@ import { useForm } from "react-hook-form";
 import { useNavigation, useSubmit } from "react-router";
 import { useEffect, useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
+import { ArrowDown, ArrowUp, ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+
 
 type User = { id: number, name: string, email: string };
 
@@ -14,11 +16,14 @@ let mem: User[] = [
     { id: 1, name: "Taro Tanaka", email: "taro@example.com" },
     { id: 2, name: "Hanako Kikuchi", email: "hanako@example.com" },
 ];
-export async function loader(): Promise<{ users: User[] }> {
-    const r = await fetch("http://localhost:6173/users")
+export async function loader({ request }: Route.LoaderArgs): Promise<{ users: User[]; sort?: string }> {
+    const url = new URL(request.url)
+    console.log(url.search)
+    const sort = url.searchParams.get("_sort") ?? undefined;
+    const r = await fetch(`http://localhost:6173${url.pathname}${url.search}`)
     if (r.ok) {
         const result = JSON.parse(await r.text());
-        return { users: result }
+        return { users: result, sort }
     } else {
         return { users: [] } // TODO: handle error
     }
@@ -46,10 +51,18 @@ export async function action({ request }: Route.ActionArgs): Promise<ActionData>
     }
 }
 
+const sortableHeader = (label: string) => ({ column }: { column: Column<User, unknown> }) => {
+    const sorted = column.getIsSorted()
+    return (<Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(sorted === "asc")}
+    >{label}{sorted === "asc" ? <ArrowUp /> : sorted === "desc" ? <ArrowDown /> : undefined}</Button >)
+}
+
 const cols: ColumnDef<User>[] = [
-    { accessorKey: "id", header: "ID" },
-    { accessorKey: "name", header: "Name" },
-    { accessorKey: "email", header: "Email" },
+    { accessorKey: "id", header: sortableHeader("ID") },
+    { accessorKey: "name", header: sortableHeader("Name") },
+    { accessorKey: "email", header: sortableHeader("Email") },
 ]
 
 function DataTable<TData, TValue>({ columns, data }: { columns: ColumnDef<TData, TValue>[], data: TData[] }) {
