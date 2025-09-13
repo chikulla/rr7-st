@@ -1,0 +1,29 @@
+{
+    "users": [
+        {
+            "id": 1,
+            "name": "Taro Tanaka",
+            "email": "taro@example.com"
+        },
+        {
+            "id": 2,
+            "name": "Hanako K",
+            "email": "hanako@example.com"
+        },
+        {
+            "id": 3,
+            "name": "Ichiro Sato",
+            "email": "ichiro@example.com"
+        },
+        {
+            "id": 4,
+            "name": "Yumi Aoki",
+            "email": "yumi@example.com"
+        },
+        {
+            "id": 5,
+            "name": "Ken Suzuki",
+            "email": "ken@example.com"
+        }
+    ]
+}
