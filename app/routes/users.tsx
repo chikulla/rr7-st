@@ -15,7 +15,14 @@ let mem: User[] = [
     { id: 2, name: "Hanako Kikuchi", email: "hanako@example.com" },
 ];
 export async function loader(): Promise<{ users: User[] }> {
-    return { users: mem }
+    const r = await fetch("http://localhost:6173/users")
+    if (r.ok) {
+        const result = JSON.parse(await r.text());
+        return { users: result }
+    } else {
+        return { users: [] } // TODO: handle error
+    }
+
 }
 
 export type ActionData = { error: string } | { created: User };
@@ -71,7 +78,7 @@ function DataTable<TData, TValue>({ columns, data }: { columns: ColumnDef<TData,
                         ))
                     ) : (
                         <TableRow>
-                            <TableCell colSpan={columns.length}>
+                            <TableCell colSpan={columns.length} className="h-24 text-center">
                                 No results
                             </TableCell>
                         </TableRow>
