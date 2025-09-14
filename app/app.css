@@ -131,7 +131,8 @@ body {
   body {
     @apply bg-background text-foreground;
   }
-  button {
+  button, a {
+    user-select: none;
     cursor: pointer;
   }
 }
