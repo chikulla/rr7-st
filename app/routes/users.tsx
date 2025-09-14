@@ -76,7 +76,6 @@ const cols: ColumnDef<User>[] = [
 function DataTable<TData, TValue>({ columns, data, pages }: { columns: ColumnDef<TData, TValue>[], data: TData[], pages: number }) {
     const location = useLocation();
     const params = new URLSearchParams(location.search)
-    const _sort = params.get("_sort")
     const _page = params.get("_page") || "1"
     const _perPage = params.get("_per_page") || "10"
 
@@ -87,8 +86,12 @@ function DataTable<TData, TValue>({ columns, data, pages }: { columns: ColumnDef
         if (sorting.length === 0) {
             return
         }
+        const params = new URLSearchParams(location.search)
         const s = sorting[0];
-        navigate(`?_sort=${s.desc ? '-' : ''}${s.id}&_order=${s.desc ? "desc" : "asc"}`, { replace: true })
+        params.set("_sort", `${s.desc ? '-' : ''}${s.id}`);
+        params.set("_page", "1");
+        navigate({ pathname: location.pathname, search: params.toString() }, { replace: true })
+        // TODO: Tanstack's internal page doesnt reset to 1 when sorting changes (previous is enabled when I visit page > 1)
     }, [sorting])
     useEffect(() => {
         console.log("pagination changed: ", pagination)
