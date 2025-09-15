@@ -76,6 +76,7 @@ const cols: ColumnDef<User>[] = [
 function DataTable<TData, TValue>({ columns, data, pages }: { columns: ColumnDef<TData, TValue>[], data: TData[], pages: number }) {
     const location = useLocation();
     const params = new URLSearchParams(location.search)
+    const _sort = params.get("_sort")
     const _page = params.get("_page") || "1"
     const _perPage = params.get("_per_page") || "10"
 
@@ -83,21 +84,21 @@ function DataTable<TData, TValue>({ columns, data, pages }: { columns: ColumnDef
     const [pagination, setPagination] = useState<PaginationState>({ pageIndex: _page ? parseInt(_page) - 1 : 0, pageSize: _perPage ? parseInt(_perPage) : 10 });
     const navigate = useNavigate();
     useEffect(() => {
-        if (sorting.length === 0) {
-            return
-        }
+        console.log(pagination)
         const params = new URLSearchParams(location.search)
-        const s = sorting[0];
-        params.set("_sort", `${s.desc ? '-' : ''}${s.id}`);
-        params.set("_page", "1");
+        if (sorting.length !== 0) {
+            const s = sorting[0];
+            params.set("_sort", `${s.desc ? '-' : ''}${s.id}`);
+        }
+        params.set("_page", (pagination.pageIndex + 1).toString());
+        params.set("_per_page", pagination.pageSize.toString());
+
         navigate({ pathname: location.pathname, search: params.toString() }, { replace: true })
-        // TODO: Tanstack's internal page doesnt reset to 1 when sorting changes (previous is enabled when I visit page > 1)
-    }, [sorting])
-    useEffect(() => {
-        console.log("pagination changed: ", pagination)
-        navigate(`?_page=${pagination.pageIndex + 1}&_per_page=${pagination.pageSize}`, { replace: true })
-        // console.log("pagination changed: ", pagination)
-    }, [pagination])
+    }, [sorting, pagination])
+    // useEffect(() => { console.log("pagination changed: ", pagination)
+    //     navigate(`?_page=${pagination.pageIndex + 1}&_per_page=${pagination.pageSize}`, { replace: true })
+    //     // console.log("pagination changed: ", pagination)
+    // }, [pagination, sorting])
     const table = useReactTable({
         data,
         columns,
